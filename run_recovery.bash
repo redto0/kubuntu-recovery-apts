@@ -1,10 +1,9 @@
 #!/bin/bash
 
 # Get the directory where THIS script is saved
-# This ensures it finds the other files even if you run it from a different folder
 SCRIPT_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# 1. Ask the user for a location
+# Ask the user for a location
 echo "Where would you like to save the recovery lists?"
 read -p "Path (Press Enter for current directory): " USER_DIR
 
@@ -20,16 +19,16 @@ echo "------------------------------------------------"
 echo "Working directory set to: $WORK_DIR"
 echo "------------------------------------------------"
 
-# 2. Run the Scanner
-echo "[1/3] Running Scanner..."
+# Run the Scanner
+echo "[Scanner] Generating package lists..."
 bash "$SCRIPT_HOME/scanner.bash" "$WORK_DIR"
 
-# 3. Run Snap Restore
-echo "[2/3] Restoring Snaps..."
+# Run Snap Restore
+echo "[Snap Restore] Restoring Snaps..."
 bash "$SCRIPT_HOME/reinstall-snaps.bash" "$WORK_DIR"
 
-# 4. Run Apt Restore
-echo "[3/3] Restoring Apts..."
+# Run Apt Restore
+echo "[Apt Restore] Restoring Apts..."
 bash "$SCRIPT_HOME/reinstall-apts.bash" "$WORK_DIR"
 
 echo "------------------------------------------------"
