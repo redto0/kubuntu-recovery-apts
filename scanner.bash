@@ -1,23 +1,26 @@
-# Create the files
+#!/bin/bash
+
+# Read the target dir from command line, default to '.' if missing
+TARGET_DIR="${1:-.}"
+APT_LIST="$TARGET_DIR/apt-list-candidates.txt"
+SNAP_LIST="$TARGET_DIR/snap-list.txt"
+
 echo "Scanning for Snap packages..."
-ls -1 ~/snap | grep -v "common" > ~/Documents/snap-list.txt
+[cite_start]# [cite: 13, 14] Scans snap dir, removes 'common', saves to variable path
+ls -1 ~/snap | grep -v "common" > "$SNAP_LIST"
 
 echo "Scanning for Apt packages (Deep Scan)..."
-echo "# Deep Scan Candidate List" > ~/Documents/apt-list-candidates.txt
+echo "# Deep Scan Candidate List" > "$APT_LIST"
 
-# 1. Check ~/.config
-ls -1 ~/.config >> ~/Documents/apt-list-candidates.txt
+[cite_start]# [cite: 1, 15, 16] Append configs, local share, and desktop shortcuts to list
+ls -1 ~/.config >> "$APT_LIST"
+ls -1 ~/.local/share | grep -vE "^(icons|fonts|applications|desktop-directories|mime)$" >> "$APT_LIST"
+ls -1 ~/.local/share/applications | sed 's/.desktop//g' >> "$APT_LIST"
 
-# 2. Check ~/.local/share (filtering system folders)
-ls -1 ~/.local/share | grep -vE "^(icons|fonts|applications|desktop-directories|mime)$" >> ~/Documents/apt-list-candidates.txt
+[cite_start]# [cite: 4, 5, 17] Check dotfiles, clean output
+find ~ -maxdepth 1 -name ".*" -type f | awk -F/ '{print $NF}' | sed 's/^\.//' | sed 's/rc$//' >> "$APT_LIST"
 
-# 3. Check Desktop Shortcuts (High accuracy)
-ls -1 ~/.local/share/applications | sed 's/.desktop//g' >> ~/Documents/apt-list-candidates.txt
+# Sort and Clean (reading and writing to the same variable path)
+sort -u "$APT_LIST" -o "$APT_LIST"
 
-# 4. Check Dot-files (e.g. .vimrc -> vim)
-find ~ -maxdepth 1 -name ".*" -type f | awk -F/ '{print $NF}' | sed 's/^\.//' | sed 's/rc$//' >> ~/Documents/apt-list-candidates.txt
-
-# Sort, remove duplicates, and save
-sort -u ~/Documents/apt-list-candidates.txt -o ~/Documents/apt-list-candidates.txt
-
-echo "Scan Complete. Lists saved to ~/Documents/"
+echo "Scan Complete. Lists saved to: $TARGET_DIR"
