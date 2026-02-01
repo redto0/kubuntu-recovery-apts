@@ -9,16 +9,17 @@ if [ ! -f "$APT_LIST" ]; then
     exit 1
 fi
 
-[cite_start]# [cite: 6] Create log in the target dir
+# Create log in the target dir
 echo "Apt Restore Log - $(date)" > "$LOG_FILE"
 
 echo "Starting Apt Bulk Install..."
 
-[cite_start]# [cite: 7] Loop through the list
+# Loop through the list
 while read -r package; do
+    # Skip comments or empty lines
     [[ "$package" =~ ^#.*$ ]] || [ -z "$package" ] && continue
     
-    [cite_start]# [cite: 9] Install using the variable package name
+    # Install using the variable package name
     if sudo apt install -y "$package" > /dev/null 2>&1; then
         echo "SUCCESS: $package"
     else
@@ -27,5 +28,5 @@ while read -r package; do
     fi
 done < "$APT_LIST"
 
-[cite_start]# [cite: 10] Point user to the correct log location
+# Point user to the correct log location
 echo "Check $LOG_FILE for details."
