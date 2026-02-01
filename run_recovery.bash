@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Get the directory where this script is saved (so we can find scanner.bash etc)
+# Get the directory where THIS script is saved
+# This ensures it finds the other files even if you run it from a different folder
 SCRIPT_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # 1. Ask the user for a location
@@ -12,7 +13,7 @@ WORK_DIR="${USER_DIR:-.}"
 
 # Create the directory if it doesn't exist
 mkdir -p "$WORK_DIR"
-# Convert to absolute path for safety
+# Convert to absolute path so the sub-scripts don't get confused
 WORK_DIR="$(cd "$WORK_DIR" && pwd)"
 
 echo "------------------------------------------------"
@@ -20,7 +21,6 @@ echo "Working directory set to: $WORK_DIR"
 echo "------------------------------------------------"
 
 # 2. Run the Scanner
-# We pass the WORK_DIR as the first argument ($1) to the script
 echo "[1/3] Running Scanner..."
 bash "$SCRIPT_HOME/scanner.bash" "$WORK_DIR"
 
@@ -34,3 +34,4 @@ bash "$SCRIPT_HOME/reinstall-apts.bash" "$WORK_DIR"
 
 echo "------------------------------------------------"
 echo "All steps complete."
+echo "Logs saved in: $WORK_DIR"

@@ -17,6 +17,7 @@ while read -r package; do
 
     echo -n "Attempting to install Snap: $package... "
     
+    # Try install, suppress output
     if sudo snap install "$package" > /dev/null 2>&1 || sudo snap install "$package" --classic > /dev/null 2>&1; then
         echo "SUCCESS"
         echo "SNAP: $package" >> "$SUCCESS_LOG"

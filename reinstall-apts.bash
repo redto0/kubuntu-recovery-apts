@@ -10,9 +10,9 @@ if [ ! -f "$APT_LIST" ]; then
     exit 1
 fi
 
-# Create/Clear logs
-echo "Apt Restore Log (Failures) - $(date)" >> "$FAIL_LOG"
-echo "Apt Restore Log (Successes) - $(date)" >> "$SUCCESS_LOG"
+# Append headers to logs so we know when this run started
+echo "--- Apt Restore Run $(date) ---" >> "$FAIL_LOG"
+echo "--- Apt Restore Run $(date) ---" >> "$SUCCESS_LOG"
 
 echo "Starting Apt Bulk Install..."
 
@@ -37,3 +37,4 @@ done < "$APT_LIST"
 
 echo "------------------------------------------------"
 echo "Done. Successes saved to: $SUCCESS_LOG"
+echo "Failures saved to: $FAIL_LOG"
