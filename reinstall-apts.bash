@@ -2,16 +2,17 @@
 
 TARGET_DIR="${1:-.}"
 APT_LIST="$TARGET_DIR/apt-list-candidates.txt"
-LOG_FILE="$TARGET_DIR/install_failures.log"
+FAIL_LOG="$TARGET_DIR/install_failures.log"
+SUCCESS_LOG="$TARGET_DIR/install_success.log"
 
 if [ ! -f "$APT_LIST" ]; then
     echo "Error: $APT_LIST not found. Run scanner first."
     exit 1
 fi
 
-# Create/Append to log in the target dir
-# (We append >> so we don't overwrite Snap failures if they ran first)
-echo "Apt Restore Log - $(date)" >> "$LOG_FILE"
+# Create/Clear logs
+echo "Apt Restore Log (Failures) - $(date)" >> "$FAIL_LOG"
+echo "Apt Restore Log (Successes) - $(date)" >> "$SUCCESS_LOG"
 
 echo "Starting Apt Bulk Install..."
 
@@ -24,13 +25,15 @@ while read -r package; do
 
     # Install using the variable package name
     if sudo apt install -y "$package" > /dev/null 2>&1; then
-        echo "SUCCESS (Installed or Updated)"
+        echo "SUCCESS"
+        # Log to success file
+        echo "$package" >> "$SUCCESS_LOG"
     else
-        echo "SKIPPED (Not found or error)"
-        echo "APT: $package" >> "$LOG_FILE"
+        echo "SKIPPED"
+        # Log to failure file
+        echo "APT: $package" >> "$FAIL_LOG"
     fi
 done < "$APT_LIST"
 
-# Point user to the correct log location
 echo "------------------------------------------------"
-echo "Details logged to: $LOG_FILE"
+echo "Done. Successes saved to: $SUCCESS_LOG"
