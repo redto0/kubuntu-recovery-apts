@@ -10,6 +10,10 @@ if [ ! -f "$SNAP_LIST" ]; then
     exit 1
 fi
 
+# Clean the list: Remove .snap and .assert file extensions
+echo "Cleaning Snap list..."
+sed -i -E '/(\.snap|\.assert)$/d' "$SNAP_LIST"
+
 echo "Starting Snap Bulk Install..."
 
 while read -r package; do

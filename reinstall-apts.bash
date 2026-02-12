@@ -10,6 +10,13 @@ if [ ! -f "$APT_LIST" ]; then
     exit 1
 fi
 
+# Clean the list to prevent False Positives
+# Removes config files (rc/conf), backups, uppercase folders, etc.
+echo "Cleaning package list..."
+sed -i -E '/(rc|conf|list|xbel|bak|tmp|swp|history|logout)$/d' "$APT_LIST"
+sed -i '/[A-Z]/d' "$APT_LIST"
+sed -i '/_/d' "$APT_LIST"
+
 # Append headers to logs so we know when this run started
 echo "--- Apt Restore Run $(date) ---" >> "$FAIL_LOG"
 echo "--- Apt Restore Run $(date) ---" >> "$SUCCESS_LOG"
